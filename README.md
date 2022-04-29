@@ -11,9 +11,9 @@ This project is used to demostrate my gameplay programming with the following it
 
 # Development Environment
 
-| Items         | Version / Desc  |
+| Tools         | Version         |
 | ------------- | --------------- |
-| Unity Version | 2021.3.1f1      |
+| Unity         | 2021.3.1f1      |
 | IDE           | JetBrains Rider |
 
 # External Links
