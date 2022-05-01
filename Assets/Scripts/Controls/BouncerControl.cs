@@ -15,12 +15,14 @@ namespace Controls
 
         private Vector3 _lastTouchPosition, _startPosition;
         private Rigidbody2D _rigidbody;
+        private Camera currentCamera;
 
         #region Unity Lifecycles
         
         private void Awake()
         {
             _rigidbody = GetComponent< Rigidbody2D >();
+            currentCamera = Camera.main;
         }
 
         private void Update()
@@ -43,15 +45,13 @@ namespace Controls
 
         void UpdateMouse()
         {
-            if( Input.GetMouseButton( 0 ))
+            if( Input.GetMouseButton( 0 ) )
             {
-                float dragDistance = Vector3.Distance( _startPosition, _lastTouchPosition );
-                float directionVec = Vector3.Dot( transform.right, _lastTouchPosition - _startPosition );
-                Debug.Log( $"[Input Control] Drag Distance: {dragDistance}" );
-                _rigidbody.velocity = transform.right * dragDistance * Time.deltaTime;
-                
-
-                _lastTouchPosition = Input.mousePosition;
+                Vector3 currentPosition = Input.mousePosition;
+                Vector3 touchToWorldPosition = currentCamera.ScreenToWorldPoint( currentPosition );
+                transform.position = new Vector3( Mathf.Clamp( touchToWorldPosition.x, minX, maxX ), 
+                                                  transform.position.y,
+                                                  transform.position.z );
             }
         }
 
