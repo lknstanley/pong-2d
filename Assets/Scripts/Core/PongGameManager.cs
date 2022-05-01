@@ -8,15 +8,9 @@ namespace Core
         #region Singleton Setup
         
         private static PongGameManager _instance;
-        private void Awake()
-        {
-            _instance = this;
-        }
-
-        #endregion
-
-        #region Interfaces
-
+        
+        private void Awake() => _instance = this;
+        
         /// <summary>
         /// Get Pong Game Manager Instance
         /// </summary>
@@ -24,5 +18,13 @@ namespace Core
         public PongGameManager GetInstance() => _instance;
 
         #endregion
+
+        [ SerializeField ] 
+        private LevelGenerator levelGenerator;
+        /// <summary>
+        /// Get Level generator instance
+        /// </summary>
+        /// <returns></returns>
+        public LevelGenerator GetLevelGenerator() => levelGenerator;
     }
 }
