@@ -27,6 +27,7 @@ namespace Gameplay
             var eventManager = PongGameManager.GetInstance().GetEventManager();
             eventManager.SubscribeEvent( PongEventManager.PongEventType.IncreaseLevel, Reset );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.DecreaseLevel, Reset );
+            eventManager.SubscribeEvent( PongEventManager.PongEventType.LoseHealth, Reset );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.GameOver, Reset );
         }
 
