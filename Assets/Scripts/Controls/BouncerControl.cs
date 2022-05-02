@@ -1,4 +1,6 @@
 ﻿using System;
+using Core;
+using Gameplay;
 using UnityEngine;
 
 namespace Controls
@@ -10,6 +12,9 @@ namespace Controls
         [ Header( "Config" ) ] 
         public float minX;
         public float maxX;
+
+        [ Header( "Ball References" ) ] 
+        public BouncingBall ball;
 
         #endregion
 
@@ -47,6 +52,8 @@ namespace Controls
         {
             if( Input.GetMouseButton( 0 ) )
             {
+                ball.InitSpeed();
+                
                 Vector3 currentPosition = Input.mousePosition;
                 Vector3 touchToWorldPosition = currentCamera.ScreenToWorldPoint( currentPosition );
                 transform.position = new Vector3( Mathf.Clamp( touchToWorldPosition.x, minX, maxX ), 
