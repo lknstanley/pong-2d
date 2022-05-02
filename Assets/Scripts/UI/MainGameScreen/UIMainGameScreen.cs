@@ -30,7 +30,6 @@ namespace UI.MainGameScreen
             eventManager.SubscribeEvent( PongEventManager.PongEventType.GameOver, OnGameOver );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.IncreaseLevel, OnLevelChanged );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.DecreaseLevel, OnLevelChanged );
-            eventManager.SubscribeEvent( PongEventManager.PongEventType.LoseHealth, OnLoseHealth );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.AllClear, OnAllClear );
 
             Reset();
@@ -39,6 +38,13 @@ namespace UI.MainGameScreen
         public void UpdateUI()
         {
             levelLbl.text = $"Level: {PongGameManager.GetInstance().GetLevelGenerator().currentLevel}";
+            
+            // Get latest health value from level generator
+            int newHealth = PongGameManager.GetInstance().GetLevelGenerator().health;
+            
+            // Change heart sprite to empty heart
+            for( int i = newHealth; i < hearts.Count; i++ )
+                hearts[ i ].sprite = emptyHeartSprite;
         }
 
         #region Internal
@@ -78,16 +84,6 @@ namespace UI.MainGameScreen
         void OnAllClear()
         {
             allClearOverlayTransform.gameObject.SetActive( true );
-        }
-
-        void OnLoseHealth()
-        {
-            // Get latest health value from level generator
-            int newHealth = PongGameManager.GetInstance().GetLevelGenerator().health;
-            
-            // Change heart sprite to empty heart
-            for( int i = newHealth - 1; i < hearts.Count; i++ )
-                hearts[ i ].sprite = emptyHeartSprite;
         }
 
         public void OnStartButtonClicked()

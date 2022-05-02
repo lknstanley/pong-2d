@@ -77,6 +77,9 @@ namespace Core
             if( health <= 0 )
                 PongGameManager.GetInstance().GetEventManager()
                                .BroadcastEvent( PongEventManager.PongEventType.GameOver );
+            
+            // Update UI
+            PongGameManager.GetInstance().GetUIManager().mainGameScreen.UpdateUI();
         }
 
         void OnGameOver()
