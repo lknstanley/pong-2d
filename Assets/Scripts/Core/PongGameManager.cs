@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Core
@@ -15,7 +14,7 @@ namespace Core
         /// Get Pong Game Manager Instance
         /// </summary>
         /// <returns></returns>
-        public PongGameManager GetInstance() => _instance;
+        public static PongGameManager GetInstance() => _instance;
 
         #endregion
 
@@ -26,5 +25,21 @@ namespace Core
         /// </summary>
         /// <returns></returns>
         public LevelGenerator GetLevelGenerator() => levelGenerator;
+
+        [ SerializeField ] 
+        private UIManager uiManager;
+        /// <summary>
+        /// Get UI manager instance
+        /// </summary>
+        /// <returns></returns>
+        public UIManager GetUIManager() => uiManager;
+
+        [ SerializeField ]
+        private PongEventManager pongEventManager;
+        /// <summary>
+        /// Get Pong event manager instance
+        /// </summary>
+        /// <returns></returns>
+        public PongEventManager GetEventManager() => pongEventManager;
     }
 }
