@@ -21,6 +21,7 @@ namespace Core
         public int maxRow = 11;
 
         [ Header( "Game Condition" ) ]
+        public int maxHealth = 3;
         public int leftBrick = 0;
         public int health = 3;
 
@@ -35,13 +36,21 @@ namespace Core
             eventManager.SubscribeEvent( PongEventManager.PongEventType.DecreaseLevel, OnDecreaseLevel );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.DestroyBrick, OnDestroyBrick );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.LoseHealth, OnLoseHealth );
+            eventManager.SubscribeEvent( PongEventManager.PongEventType.StartGame, OnStartGame );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.GameOver, OnGameOver );
+
+            Reset();
         }
 
         #endregion
 
         #region Event Handlers
 
+        void OnStartGame()
+        {
+            PopulateLevel();
+        }
+        
         void OnIncreaseLevel()
         {
             currentLevel++;
@@ -87,9 +96,26 @@ namespace Core
         [ ContextMenu( "Generate Level" ) ]
         public void PopulateLevel()
         {
+            // Clean all bricks
             CleanLevel();
+            
+            // Load level json from resources file
             levelJson = Resources.Load< TextAsset >( $"Levels/level_{currentLevel}" );
+            
+            // If the json is null, means no more level can be loaded
+            // So players clear the game
+            if( levelJson == null )
+            {
+                PongGameManager.GetInstance().GetEventManager()
+                               .BroadcastEvent( PongEventManager.PongEventType.AllClear );
+                return;
+            }
+
+            // Populate bricks
             GenerateLevel();
+            
+            // Update UI
+            PongGameManager.GetInstance().GetUIManager().mainGameScreen.UpdateUI();
         }
 
         /// <summary>
@@ -120,6 +146,12 @@ namespace Core
 
         #region Internal
 
+        void Reset()
+        {
+            // Init state
+            health = maxHealth;
+        }
+        
         /// <summary>
         /// Generate level from json file
         /// </summary>

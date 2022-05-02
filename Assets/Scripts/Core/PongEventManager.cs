@@ -15,6 +15,8 @@ namespace Core
             IncreaseLevel,
             DecreaseLevel,
             GameOver,
+            StartGame,
+            AllClear,
         }
 
         private Dictionary< PongEventType, List< Action > > _subscribers = new Dictionary< PongEventType, List< Action > >();
