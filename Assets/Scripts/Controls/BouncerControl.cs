@@ -2,6 +2,7 @@
 using Core;
 using Gameplay;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Controls
 {
@@ -50,7 +51,7 @@ namespace Controls
 
         void UpdateMouse()
         {
-            if( Input.GetMouseButton( 0 ) )
+            if( Input.GetMouseButton( 0 ) && !EventSystem.current.IsPointerOverGameObject() )
             {
                 ball.InitSpeed();
                 
