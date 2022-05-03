@@ -20,36 +20,25 @@ namespace Controls
         #endregion
 
         private Vector3 _lastTouchPosition, _startPosition;
-        private Rigidbody2D _rigidbody;
         private Camera currentCamera;
 
         #region Unity Lifecycles
         
         private void Awake()
         {
-            _rigidbody = GetComponent< Rigidbody2D >();
             currentCamera = Camera.main;
         }
 
         private void Update()
         {
-            #if UNITY_EDITOR
-            UpdateMouse();
-            #else
-            UpdateTouch();
-            #endif
+            UpdateInput();
         }
 
         #endregion
 
         #region Internal
 
-        void UpdateTouch()
-        {
-            
-        }
-
-        void UpdateMouse()
+        void UpdateInput()
         {
             if( Input.GetMouseButton( 0 ) && !EventSystem.current.IsPointerOverGameObject() )
             {
