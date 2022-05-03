@@ -10,13 +10,11 @@ namespace Core
         public enum PongEventType
         {
             DestroyBrick,
-            IncreaseScore,
             LoseHealth,
-            IncreaseLevel,
-            DecreaseLevel,
             GameOver,
             StartGame,
-            AllClear,
+            LevelChanged,
+            UpdateUI,
         }
 
         private Dictionary< PongEventType, List< Action > > _subscribers = new Dictionary< PongEventType, List< Action > >();

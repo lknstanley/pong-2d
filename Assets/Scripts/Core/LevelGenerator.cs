@@ -5,14 +5,12 @@ namespace Core
 {
     public class LevelGenerator : MonoBehaviour
     {
-
         #region Inspector
 
         [ Header( "Level Config" ) ]
         public Vector3 levelCenterPosition;
         public Vector3 levelSize;
         public GameObject brickPrefab;
-        public int currentLevel = 1;
 
         [ Header( "Map Config" ) ]
         public TextAsset levelJson;
@@ -24,6 +22,7 @@ namespace Core
         public int maxHealth = 3;
         public int leftBrick = 0;
         public int health = 3;
+        public PlayerStatus playerStatus;
 
         #endregion
 
@@ -32,8 +31,6 @@ namespace Core
         private void Start()
         {
             var eventManager = PongGameManager.GetInstance().GetEventManager();
-            eventManager.SubscribeEvent( PongEventManager.PongEventType.IncreaseLevel, OnIncreaseLevel );
-            eventManager.SubscribeEvent( PongEventManager.PongEventType.DecreaseLevel, OnDecreaseLevel );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.DestroyBrick, OnDestroyBrick );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.LoseHealth, OnLoseHealth );
             eventManager.SubscribeEvent( PongEventManager.PongEventType.StartGame, OnStartGame );
@@ -50,31 +47,35 @@ namespace Core
         {
             PopulateLevel();
         }
-        
-        void OnIncreaseLevel()
-        {
-            currentLevel++;
-            PopulateLevel();
-        }
-
-        void OnDecreaseLevel()
-        {
-            currentLevel--;
-            PopulateLevel();
-        }
 
         void OnDestroyBrick()
         {
             leftBrick--;
-            if( leftBrick <= 0 )
-                PongGameManager.GetInstance().GetEventManager()
-                               .BroadcastEvent( PongEventManager.PongEventType.IncreaseLevel );
+            if ( leftBrick <= 0 )
+            {
+                // Increase level
+                LevelUp();
+                
+                // Check can next level
+                if ( TryLoadLevel( $"Levels/level_{playerStatus.currentLevel}", out var text ) )
+                {
+                    // Broadcast level has changed
+                    PongGameManager.GetInstance().GetEventManager()
+                                   .BroadcastEvent( PongEventManager.PongEventType.LevelChanged );
+                }
+                else
+                {
+                    // Broadcast game over
+                    PongGameManager.GetInstance().GetEventManager()
+                                   .BroadcastEvent( PongEventManager.PongEventType.GameOver );
+                }
+            }
         }
 
         void OnLoseHealth()
         {
-            health--;
-            if( health <= 0 )
+            playerStatus.currentHealth--;
+            if( playerStatus.currentHealth <= 0 )
                 PongGameManager.GetInstance().GetEventManager()
                                .BroadcastEvent( PongEventManager.PongEventType.GameOver );
             
@@ -103,22 +104,21 @@ namespace Core
             CleanLevel();
             
             // Load level json from resources file
-            levelJson = Resources.Load< TextAsset >( $"Levels/level_{currentLevel}" );
-            
-            // If the json is null, means no more level can be loaded
-            // So players clear the game
-            if( levelJson == null )
+            if ( TryLoadLevel( $"Levels/level_{playerStatus.currentLevel}", out levelJson ) )
             {
-                PongGameManager.GetInstance().GetEventManager()
-                               .BroadcastEvent( PongEventManager.PongEventType.AllClear );
-                return;
-            }
-
-            // Populate bricks
-            GenerateLevel();
+                // Populate bricks
+                GenerateLevel();
             
-            // Update UI
-            PongGameManager.GetInstance().GetUIManager().mainGameScreen.UpdateUI();
+                // Update UI
+                PongGameManager.GetInstance().GetUIManager().mainGameScreen.UpdateUI();
+            }
+            else
+            {
+                // If the json is null, means no more level can be loaded
+                // So players clear the game
+                PongGameManager.GetInstance().GetEventManager()
+                               .BroadcastEvent( PongEventManager.PongEventType.GameOver );
+            }
         }
 
         /// <summary>
@@ -132,27 +132,44 @@ namespace Core
                 Destroy( child.gameObject );
             }
         }
-        
+
         /// <summary>
         /// Upgrade the level / difficulties
         /// </summary>
         [ ContextMenu( "Level Up" ) ]
-        public void LevelUp() => currentLevel++;
-        
+        public void LevelUp()
+        {
+            playerStatus.currentLevel++;
+        }
+
         /// <summary>
-        /// Downgrade the level / difficulties
+        /// Get current player status
         /// </summary>
-        [ ContextMenu( "Level Down" ) ]
-        public void LevelDown() => currentLevel--;
+        /// <returns></returns>
+        public PlayerStatus GetPlayerStatus() => playerStatus;
 
         #endregion
 
         #region Internal
 
+        bool TryLoadLevel( string path, out TextAsset loadedText )
+        {
+            loadedText = Resources.Load< TextAsset >( path );
+            return loadedText != null;
+        }
+        
         void Reset()
         {
-            // Init state
-            health = maxHealth;
+            // Setup player status
+            playerStatus = new PlayerStatus()
+            {
+                maxHealth = maxHealth,
+                currentHealth = maxHealth,
+                currentLevel = 1
+            };
+            
+            // Init UI
+            PongGameManager.GetInstance().GetUIManager().mainGameScreen.InitUI();
         }
         
         /// <summary>
