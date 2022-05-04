@@ -7,14 +7,17 @@ namespace Gameplay
     public class BouncingBall : MonoBehaviour
     {
 
+        #region Inspector
+        
         [ Header( "Ball Config" ) ] 
         public Vector2 initialVelocity;
         public float ballSpeed = 1.5f;
         public BouncerControl bouncer;
+
+        #endregion
         
         private Rigidbody2D _rigidbody;
         private Vector2 _lastVelocity;
-
         private bool _isPlaying = false;
         
         #region Unity Lifecycles
