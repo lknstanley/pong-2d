@@ -13,14 +13,18 @@ namespace Core
             LoseHealth,
             GameOver,
             StartGame,
-            LevelChanged,
-            UpdateUI,
+            LevelChanged
         }
 
         private Dictionary< PongEventType, List< Action > > _subscribers = new Dictionary< PongEventType, List< Action > >();
 
         private void OnDestroy() => _subscribers.Clear();
 
+        /// <summary>
+        /// Subscribe target game event
+        /// </summary>
+        /// <param name="eventType">Target event type</param>
+        /// <param name="action">Callback function</param>
         public void SubscribeEvent( PongEventType eventType, Action action )
         {
             if( !_subscribers.ContainsKey( eventType ) )
@@ -33,6 +37,11 @@ namespace Core
                 Debug.LogError( $"[PongEventManager] Already subscribed" );
         }
 
+        /// <summary>
+        /// Unsubscribe event from the event manager
+        /// </summary>
+        /// <param name="eventType">Target event</param>
+        /// <param name="action">Callback function that has bound to the target event</param>
         public void UnsubscribeEvent( PongEventType eventType, Action action )
         {
             if( !_subscribers.ContainsKey( eventType ) ) return;
@@ -43,6 +52,10 @@ namespace Core
                 Debug.LogError( $"[PongEventManager] Haven't subscribed before" );
         }
 
+        /// <summary>
+        /// Broadcast target event to all listeners
+        /// </summary>
+        /// <param name="eventType">Target event</param>
         public void BroadcastEvent( PongEventType eventType )
         {
             if( !_subscribers.ContainsKey( eventType ) ) return;
