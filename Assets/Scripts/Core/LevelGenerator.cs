@@ -57,7 +57,7 @@ namespace Core
                 LevelUp();
                 
                 // Check can next level
-                if ( TryLoadLevel( $"Levels/level_{playerStatus.currentLevel}", out var text ) )
+                if ( TryLoadLevel( out var text ) )
                 {
                     // Broadcast level has changed
                     PongGameManager.GetInstance().GetEventManager()
@@ -104,7 +104,7 @@ namespace Core
             CleanLevel();
             
             // Load level json from resources file
-            if ( TryLoadLevel( $"Levels/level_{playerStatus.currentLevel}", out levelJson ) )
+            if ( TryLoadLevel( out levelJson ) )
             {
                 // Populate bricks
                 GenerateLevel();
@@ -152,9 +152,9 @@ namespace Core
 
         #region Internal
 
-        bool TryLoadLevel( string path, out TextAsset loadedText )
+        bool TryLoadLevel( out TextAsset loadedText )
         {
-            loadedText = Resources.Load< TextAsset >( path );
+            loadedText = PongGameManager.GetInstance().GetLevelDatabase().GetLevel( playerStatus.currentLevel - 1 );
             return loadedText != null;
         }
         

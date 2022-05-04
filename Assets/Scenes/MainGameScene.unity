@@ -173,7 +173,7 @@ MonoBehaviour:
   levelGenerator: {fileID: 147838650}
   uiManager: {fileID: 2033988382}
   pongEventManager: {fileID: 208342614}
-  levelDatabase: {fileID: 0}
+  levelDatabase: {fileID: 220972157}
 --- !u!1 &147838648
 GameObject:
   m_ObjectHideFlags: 0
