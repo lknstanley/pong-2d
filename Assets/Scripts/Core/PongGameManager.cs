@@ -1,3 +1,4 @@
+using Database;
 using UnityEngine;
 
 namespace Core
@@ -41,5 +42,13 @@ namespace Core
         /// </summary>
         /// <returns></returns>
         public PongEventManager GetEventManager() => pongEventManager;
+
+        [ SerializeField ]
+        private LevelDatabaseManager levelDatabase;
+        /// <summary>
+        /// Get level database manager instance
+        /// </summary>
+        /// <returns></returns>
+        public LevelDatabaseManager GetLevelDatabase() => levelDatabase;
     }
 }
